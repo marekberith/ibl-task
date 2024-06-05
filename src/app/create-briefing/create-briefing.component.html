@@ -1,1 +1,62 @@
-<p>create-briefing works!</p>
+<div class="container mt-4">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-group row divider">
+            <label for="inputEmail" class="col-sm-3 col-form-label">Message Types:</label>
+            <div class="col-sm-9 d-flex align-items-center">
+                <div class="form-check me-5">
+                    <input [ngClass]="{'is-invalid': form.errors?.['atLeastOne'] }" class="form-check-input"
+                        type="checkbox" id="metar" formControlName="metar">
+                    <label class="form-check-label" for="metar">METAR</label>
+                </div>
+                <div class="form-check me-5">
+                    <input [ngClass]="{'is-invalid': form.errors?.['atLeastOne'] }" class="form-check-input"
+                        type="checkbox" id="sigmet" formControlName="sigmet">
+                    <label class="form-check-label" for="sigmet">SIGMET</label>
+                </div>
+                <div class="form-check">
+                    <input [ngClass]="{'is-invalid': form.errors?.['atLeastOne'] }" class="form-check-input"
+                        type="checkbox" id="taf" formControlName="taf">
+                    <label class="form-check-label" for="taf">TAF</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row divider">
+            <label for="airports" class="col-sm-3 col-form-label">Airports:</label>
+            <div class="col-sm-9 d-flex">
+                <input type="text"
+                    [ngClass]="{'is-invalid': form.errors?.['atLeastOneLocation'] || form.get('airports')?.invalid }"
+                    placeholder="e.g. LZIB LKPR EGLL" class="form-control" id="airports" formControlName="airports">
+            </div>
+        </div>
+        <div class="form-group row divider">
+            <label for="countries" class="col-sm-3 col-form-label">Countries:</label>
+            <div class="col-sm-9 d-flex">
+                <input type="text"
+                    [ngClass]="{'is-invalid': form.errors?.['atLeastOneLocation'] || form.get('countries')?.invalid }"
+                    placeholder="e.g. LK ED" class="form-control" id="countries" formControlName="countries">
+            </div>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-secondary">Create Briefing</button>
+        </div>
+        <div *ngIf="errorOnRequest" class="alert alert-danger mt-5" role="alert">
+            Error while fetching data from API: {{ errorOnRequest }}
+        </div>
+        <div class="mt-5" body *ngIf="data">
+            <table class="table table-bordered">
+                <tbody>
+                  <ng-container *ngFor="let record of data.result">
+                    <tr>
+                      <th colspan="4" class="bg-light">{{record.stationId}}</th>
+                    </tr>
+                    <tr>
+                      <th>{{record.queryType}}</th>
+                      <td>{{record.reportTime | date: 'd.M.yyyy HH:mm:ss'}}</td>
+                      <td [innerHTML]="record.text | highlight"></td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>              
+        </div>
+    </form>
+</div>
